@@ -1,23 +1,29 @@
 package com.example.android.guesstheword.screens.game
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class GameViewModel : ViewModel() {
 
     // The current word
-    var word = MutableLiveData<String>()
+    private var _word = MutableLiveData<String>()
+    val word: LiveData<String>
+        get() = _word
 
     // The current score
-    var score = MutableLiveData<Int>()
+    private val _score = MutableLiveData<Int>() // use internally
+    // using backing property
+    val score: LiveData<Int> // use for UI Controllers
+        get() = _score
 
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
 
     init {
-        word.value = ""
-        score.value = 0
+        _word.value = ""
+        _score.value = 0
 
         resetList()
         nextWord()
@@ -63,7 +69,7 @@ class GameViewModel : ViewModel() {
         if (wordList.isEmpty()) {
             // gameFinished()
         } else {
-            word.value = wordList.removeAt(0)
+            _word.value = wordList.removeAt(0)
         }
     }
 
@@ -71,13 +77,13 @@ class GameViewModel : ViewModel() {
 
     fun onSkip() {
         // null check
-        score.value = (score.value)?.minus(1)
+        _score.value = (score.value)?.minus(1)
         nextWord()
     }
 
     fun onCorrect() {
         // null check
-        score.value = (score.value)?.plus(1)
+        _score.value = (score.value)?.plus(1)
         nextWord()
     }
 
