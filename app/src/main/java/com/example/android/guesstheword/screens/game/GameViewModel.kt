@@ -1,11 +1,28 @@
 package com.example.android.guesstheword.screens.game
 
+import android.os.CountDownTimer
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class GameViewModel : ViewModel() {
+
+    companion object {
+        // These represent different important times
+        // This is when the game is over
+        const val DONE = 0L
+
+        // This is the number of milliseconds in a second
+        const val ONE_SECOND = 1000L
+
+        // This is the total time of the game
+        const val COUNTDOWN_TIME = 10000L
+
+    }
+
+    private val timer: CountDownTimer
 
     // The current word
     private var _word = MutableLiveData<String>()
@@ -14,9 +31,15 @@ class GameViewModel : ViewModel() {
 
     // The current score
     private val _score = MutableLiveData<Int>() // use internally
+
     // using backing property
     val score: LiveData<Int> // use for UI Controllers
         get() = _score
+
+    // The current time
+    private var _currentTime = MutableLiveData<Long>()
+    val currentTime: LiveData<Long>
+        get() = _currentTime
 
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
@@ -33,6 +56,25 @@ class GameViewModel : ViewModel() {
 
         resetList()
         nextWord()
+
+        // Creates a timer which triggers the end of the game when it finishes
+        // CountdownTimer(Total time, time of each tick)
+        timer = object : CountDownTimer(COUNTDOWN_TIME, ONE_SECOND) {
+
+            override fun onTick(millisUntilFinished: Long) {
+                // Happen each tick
+                _currentTime.value = millisUntilFinished / ONE_SECOND
+            }
+
+            override fun onFinish() {
+                // When the timer finishes
+                _currentTime.value = DONE
+                _eventGameFinish.value = true
+            }
+        }
+
+        timer.start()
+
 
     }
 
@@ -74,10 +116,10 @@ class GameViewModel : ViewModel() {
         //Select and remove a word from the list
         if (wordList.isEmpty()) {
             // Game finishes
-            _eventGameFinish.value = true
-        } else {
-            _word.value = wordList.removeAt(0)
+            resetList()
         }
+        _word.value = wordList.removeAt(0)
+
     }
 
     /** Methods for buttons presses **/
@@ -97,7 +139,7 @@ class GameViewModel : ViewModel() {
     /**
      * Represent that the event has been handled
      */
-    fun onGameFinishComplete(){
+    fun onGameFinishComplete() {
         _eventGameFinish.value = false
     }
 
@@ -106,6 +148,7 @@ class GameViewModel : ViewModel() {
      */
     override fun onCleared() {
         super.onCleared()
-        Log.i("GameViewModel", "GameViewModel destroyed!")
+        // cancel the timer to prevent memeroy leaks
+        timer.cancel()
     }
 }
