@@ -54,7 +54,7 @@ class GameFragment : Fragment() {
         )
 
         // Request reference to GameViewModel from ViewModelProvider
-        //  by passing in the fragment (this) and the specific viewmodel class
+        //  by passing in the fragment (this) and the specific view model class
         viewModel = ViewModelProvider(this)[GameViewModel::class.java]
 
         binding.gameViewModel = viewModel
@@ -62,14 +62,6 @@ class GameFragment : Fragment() {
         // Specify the current activity as the lifecycle owner of the binding. This is used so that
         // the binding can observe LiveData updates
         binding.lifecycleOwner = this
-
-        viewModel.word.observe(viewLifecycleOwner, Observer { newWord ->
-            binding.wordText.text = newWord.toString()
-        })
-
-        viewModel.currentTime.observe(viewLifecycleOwner, Observer { newTime ->
-            binding.timerText.text = DateUtils.formatElapsedTime(newTime)
-        })
 
         viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer { hasFinished ->
             if (hasFinished) {
