@@ -6,11 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import org.jojo.guess_it.R
 import org.jojo.guess_it.databinding.FragmentGameBinding
 
 class GameFragment : Fragment() {
+    private lateinit var viewModel: GameViewModel
     // The current word
     private var word = ""
 
@@ -31,6 +34,9 @@ class GameFragment : Fragment() {
             container,
             false
         )
+
+        viewModel = ViewModelProvider(this)[GameViewModel::class.java]
+
         resetList()
         nextWord()
 

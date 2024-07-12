@@ -41,6 +41,7 @@ android {
 
 dependencies {
     // Lifecycles
+    implementation (libs.androidx.lifecycle.extensions)
     // navigation
     implementation(libs.navigation.fragment.ktx)
     implementation(libs.navigation.ui.ktx)
