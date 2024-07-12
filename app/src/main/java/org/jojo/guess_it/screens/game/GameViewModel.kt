@@ -3,21 +3,43 @@ package org.jojo.guess_it.screens.game
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.material.color.utilities.Score.score
 
 class GameViewModel : ViewModel() {
     // The current word
-    var word = MutableLiveData<String>()
+    var word = object: MutableLiveData<String>() {
+        override fun onActive() {
+            super.onActive()
+            Log.d("GameViewModel", "word LiveData is active")
+        }
+        override fun onInactive() {
+            super.onInactive()
+            Log.d("GameViewModel", "word LiveData is inactive")
+        }
+    }
 
     // The current score
-    var score = MutableLiveData<Int>()
+    var score = object: MutableLiveData<Int>() {
+        override fun onActive() {
+            super.onActive()
+            Log.d("GameViewModel", "score LiveData is active")
+        }
+
+        override fun onInactive() {
+            super.onInactive()
+            Log.d("GameViewModel", "score LiveData is inactive")
+        }
+    }
 
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
     init{
         resetList()
         nextWord()
+
         score.value = 0
         word.value = ""
+
     }
     override fun onCleared() {
         super.onCleared()
