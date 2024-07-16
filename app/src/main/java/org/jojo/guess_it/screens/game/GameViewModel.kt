@@ -1,13 +1,14 @@
 package org.jojo.guess_it.screens.game
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.material.color.utilities.Score.score
 
 class GameViewModel : ViewModel() {
     // The current word
-    var word = object: MutableLiveData<String>() {
+    private val _word = object: MutableLiveData<String>() {
         override fun onActive() {
             super.onActive()
             Log.d("GameViewModel", "word LiveData is active")
@@ -18,8 +19,11 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    val word: LiveData<String>
+        get() = _word
+
     // The current score
-    var score = object: MutableLiveData<Int>() {
+    private val _score = object: MutableLiveData<Int>() {
         override fun onActive() {
             super.onActive()
             Log.d("GameViewModel", "score LiveData is active")
@@ -31,14 +35,17 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    val score: LiveData<Int>
+        get() = _score
+
+
     // The list of words - the front of the list is the next word to guess
     private lateinit var wordList: MutableList<String>
     init{
         resetList()
         nextWord()
-
-        score.value = 0
-        word.value = ""
+        _score.value = 0
+        _word.value = ""
 
     }
     override fun onCleared() {
@@ -86,19 +93,19 @@ class GameViewModel : ViewModel() {
     //  gameFinished()
 
         } else {
-            word.value = wordList.removeAt(0)
+            _word.value = wordList.removeAt(0)
         }
     }
 
     /** Methods for buttons presses **/
 
     fun onSkip() {
-        score.value = score.value?.minus( 1)
+        _score.value = score.value?.minus( 1)
         nextWord()
     }
 
     fun onCorrect() {
-        score.value = score.value?.plus( 1)
+        _score.value = score.value?.plus( 1)
         nextWord()
     }
 }
