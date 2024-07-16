@@ -1,6 +1,7 @@
 package org.jojo.guess_it.screens.game
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -54,8 +55,11 @@ class GameFragment : Fragment() {
             }
         }
 
-        return binding.root
+        viewModel.currentTime.observe(viewLifecycleOwner) {newTime ->
+            binding.timerText.text = DateUtils.formatElapsedTime(newTime)
+        }
 
+        return binding.root
     }
 
     /**
