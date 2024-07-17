@@ -6,12 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.color.utilities.Score
 import org.jojo.guess_it.R
 import org.jojo.guess_it.databinding.FragmentScoreBinding
 
 class ScoreFragment : Fragment() {
+    private lateinit var viewModel: ScoreViewModel
+    private lateinit var viewModelFactory: ScoreViewModelFactory
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,15 +31,22 @@ class ScoreFragment : Fragment() {
             false
         )
 
-        // Get args using by navArgs property delegate
-        val scoreFragmentArgs by navArgs<ScoreFragmentArgs>()
-        binding.scoreText.text = scoreFragmentArgs.score.toString()
-        binding.playAgainButton.setOnClickListener { onPlayAgain() }
+        viewModelFactory = ScoreViewModelFactory(
+            ScoreFragmentArgs.fromBundle(requireArguments()).score)
+        // tell view model provider to use the factory
+        viewModel = ViewModelProvider(this, viewModelFactory)[ScoreViewModel::class.java]
 
+        viewModel.score.observe(viewLifecycleOwner) { newScore ->
+            binding.scoreText.text = newScore.toString()
+        }
+
+        binding.playAgainButton.setOnClickListener { viewModel.onPlayAgain() }
+        viewModel.eventPlayAgain.observe(viewLifecycleOwner) { playAgain ->
+           if (playAgain) {
+               findNavController().navigate(ScoreFragmentDirections.actionRestart())
+               viewModel.onPlayAgainComplete()
+           }
+        }
         return binding.root
-    }
-
-    private fun onPlayAgain() {
-        findNavController().navigate(ScoreFragmentDirections.actionRestart())
     }
 }
