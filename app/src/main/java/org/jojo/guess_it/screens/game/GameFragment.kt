@@ -50,7 +50,9 @@ class GameFragment : Fragment() {
 
         viewModel.eventGameFinish.observe(viewLifecycleOwner) { hasFinished ->
             if (hasFinished) {
-                gameFinished()
+                val action = GameFragmentDirections.actionGameToScore()
+                action.setScore(viewModel.score.value ?: 0)
+                findNavController(this).navigate(action)
                 viewModel.onGameFinishComplete()
             }
         }
@@ -60,15 +62,6 @@ class GameFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    /**
-     * Called when the game is finished
-     */
-    private fun gameFinished() {
-        val action = GameFragmentDirections.actionGameToScore()
-        action.setScore(viewModel.score.value ?: 0)
-        findNavController(this).navigate(action)
     }
 }
 
