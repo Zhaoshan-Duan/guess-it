@@ -21,11 +21,11 @@ class ScoreViewModel(finalScore: Int): ViewModel() {
 
 
     fun onPlayAgainComplete() {
-        _eventPlayAgain.value = true
+        _eventPlayAgain.value = false
     }
 
     fun onPlayAgain() {
-        _eventPlayAgain.value = false
+        _eventPlayAgain.value = true
     }
 
 }

@@ -36,11 +36,12 @@ class ScoreFragment : Fragment() {
         // tell view model provider to use the factory
         viewModel = ViewModelProvider(this, viewModelFactory)[ScoreViewModel::class.java]
 
+        binding.scoreViewModel = viewModel
+
         viewModel.score.observe(viewLifecycleOwner) { newScore ->
             binding.scoreText.text = newScore.toString()
         }
 
-        binding.playAgainButton.setOnClickListener { viewModel.onPlayAgain() }
         viewModel.eventPlayAgain.observe(viewLifecycleOwner) { playAgain ->
            if (playAgain) {
                findNavController().navigate(ScoreFragmentDirections.actionRestart())
