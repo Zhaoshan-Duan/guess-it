@@ -1,10 +1,12 @@
 package org.jojo.guess_it.screens.game
 
 import android.os.CountDownTimer
+import android.text.format.DateUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 
 class GameViewModel : ViewModel() {
 
@@ -19,6 +21,11 @@ class GameViewModel : ViewModel() {
     private val _currentTime = MutableLiveData<Long>()
     val currentTime: LiveData<Long>
         get() = _currentTime
+
+    // Transformation.map
+    val currentTimeString = currentTime.map() { time: Long ->
+        DateUtils.formatElapsedTime(time)
+    }
 
     // The current word
     private val _word = object: MutableLiveData<String>() {
